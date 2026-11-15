@@ -20,6 +20,7 @@ proportion above both means.
 
 <b>t1c_window_rewrite.sql</b>
 - Prediction: The separate genre-means aggregation and the join back to movie_genre will disappear. I expect the rewritten query to return the same result set as the original CTE chain.
-- Result:
-- Explanation: 
+- Result: The result was as expected. The shape and result set match the reference.
+- Explanation: The rewrite works because I used a window function to calculate the average of movie means by genre, rather than calculating them separately in a CTE and joining them back. 
+This simplifies the query while preserving the same results as the original.
 
