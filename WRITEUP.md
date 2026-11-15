@@ -24,3 +24,8 @@ proportion above both means.
 - Explanation: The rewrite works because I used a window function to calculate the average of movie means by genre, rather than calculating them separately in a CTE and joining them back. 
 This simplifies the query while preserving the same results as the original.
 
+<b>Additional T1 explanation</b>
+1. A query can use two different partitions because each window function operates independently. In this case, one calculates the average rating by user and the other by movie.
+2. A movie with only one rating can never count as "above both" because its only rating is equal to its movie mean, not greater than it.
+3. In T1c, the window function replaced the separate genre-means aggregation and the join back to the movie-genre data. The original CTE chain needed these steps because GROUP BY collapsed the rows into genre averages, requiring a join to associate those averages with individual movies again.
+
