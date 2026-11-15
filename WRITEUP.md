@@ -19,7 +19,7 @@ Restricting the calculation to movies with at least 20 ratings reduces the numbe
 proportion above both means.
 
 <b>t1c_window_rewrite.sql</b>
-- Prediction: The separate genre-means aggregation and the join back to movie_genre will disappear.
+- Prediction: The separate genre-means aggregation and the join back to movie_genre will disappear. I expect the rewritten query to return the same result set as the original CTE chain.
 - Result:
 - Explanation: 
 
