@@ -18,3 +18,8 @@ A CTE allows these values to be used in the outer query to count ratings above b
 Restricting the calculation to movies with at least 20 ratings reduces the number of ratings which then allowed me to calculate the shares. The shares increased because the retained ratings had a higher
 proportion above both means.
 
+<b>t1c_window_rewrite.sql</b>
+- Prediction: The separate genre-means aggregation and the join back to movie_genre will disappear.
+- Result:
+- Explanation: 
+
