@@ -11,3 +11,10 @@
 I expect the number above both means to be less than the total number of ratings. 
 Restricting the share to movies with at least 20 ratings will decrease the numerator and may decrease the denominator used to calculate the share. This, however, can cause the 
 share to increase, decrease or remain fixed; it depends on the proportional changes with the new restricted sets.
+- Result: The result did not depart from my prediction. The result contained 1 row with the desired columns and the number above both was far less than the number of ratings as predicted. In the case
+of the restricted data set share, the share actually rose. There were 45,232 ratings with an overall share of 45.23% and a restricted share of 46.04%.
+- Explanation: The query uses window functions to calculate the user and movie means, along with the number of ratings per movie. 
+A CTE allows these values to be used in the outer query to count ratings above both means and calculate their shares. 
+Restricting the calculation to movies with at least 20 ratings reduces the number of ratings which then allowed me to calculate the shares. The shares increased because the retained ratings had a higher
+proportion above both means.
+
