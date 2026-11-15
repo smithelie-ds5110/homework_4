@@ -29,3 +29,7 @@ This simplifies the query while preserving the same results as the original.
 2. A movie with only one rating can never count as "above both" because its only rating is equal to its movie mean, not greater than it.
 3. In T1c, the window function replaced the separate genre-means aggregation and the join back to the movie-genre data. The original CTE chain needed these steps because GROUP BY collapsed the rows into genre averages, requiring a join to associate those averages with individual movies again.
 
+# T2. Top three per occupation
+- Prediction: There are 21 occupations in the database, so I expect ROW_NUMBER() to return at most 63 rows (21 × 3). The actual number may be lower because some occupations may have fewer than three movies meeting the minimum requirement of 20 ratings per movie from users in that occupation. RANK() may return more rows than ROW_NUMBER() because tied movies share the same rank, potentially producing more than three rows per occupation.
+- Result:
+- Explanation: 
