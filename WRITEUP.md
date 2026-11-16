@@ -54,3 +54,40 @@ t3b_running_mean.sql
 - Explanation: The differences occur when a user has multiple ratings with the same timestamp. The default RANGE frame includes all ratings tied at the current timestamp, while the explicit ROWS frame processes ratings individually.
 - Unlike the session flags, which only contain 0s after the first rating at a timestamp, individual rating scores can differ. Including several ratings at once can therefore change the running average compared with processing them one at a time.
 The calculations agree on each user's final value because both frames have included all of that user's ratings by the end. The final result is the overall average rating for that user, regardless of how the intermediate averages were calculated.
+
+# T4. Two indexes for four queries
+I am choosing to add indexes for movie_id and timestamp.
+- Prediction: 
+  - Query A: BEFORE: SEARCH existing PK index + temp B-tree for sorting AFTER: Same
+  - Query B: BEFORE: SCAN AFTER: SEARCH using movie_id
+  - Query C: BEFORE: SCAN AFTER: SEARCH using timestamp
+  - Query D: BEFORE: SCAN AFTER: SCAN
+  - Query D(rewritten): BEFORE: SCAN if no index AFTER: SEARCH using timestamp
+
+- Result/Explanation: Both indexes were created successfully and all queries returned unchanged results.
+  - Why did I choose these indexes? 
+    - I chose indexes on movie_id and timestamp because they provide the greatest benefit across the queries. The movie_id index speeds up Query B, while the timestamp index speeds up Query C and the rewritten Query D. Query A already benefits from an existing index.
+
+  - Why did A_profile use an index before I added any? 
+    - The ratings table already has a composite primary key on (user_id, movie_id), which sqlite automatically indexes. Since Query A filters by user_id, sqlite can use the first column of that existing index to find matching ratings.
+
+  - What additional work does USE TEMP B-TREE FOR ORDER BY perform? 
+    - Although the existing index helps locate a user's ratings, it does not store them in timestamp order. sqlite must therefore perform an additional sorting operation using a temporary B-tree to identify the 20 most recent ratings.
+
+  - How many bytes do the indexes use? 
+    - The database increased from 3629056 to 5967872 bytes after adding the indexes. The indexes added about 2338816 bytes.
+  
+  - Why does the original D_month query remain a SCAN? 
+    - The original query uses strftime() to convert each timestamp into a calendar month. Because the index stores raw timestamps rather than the transformed values, sqlite cannot directly search the index for a particular month. sqlite still needs to SCAN in order to evaluate strftime().
+
+  - What does rewriting D_month change?
+    - A direct timestamp range is used, allowing an index on timestamp to be used to execute a SEARCH.
+
+  - Did considering the rewrite change my choice of indexes? 
+    - No, I'd stick with my choice. The rewrite just unlocked the ability to use the timestamp index while keeping my other performant gains viable.
+    - Queries B and C improved by approximately 115× and 154×, respectively, while the rewritten D improved by approximately 13×. Query A showed no meaningful improvement, and the original D improved only slightly.
+
+
+
+
+- Explanation: 
