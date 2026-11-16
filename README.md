@@ -33,4 +33,4 @@ Task 4 works on a copy in `output/`. Results go to `output/`, and
 
 Record here what you used an assistant for, and for what:
 
-- (your entries)
+AI was used to translate assignment questions into simpler language, clarify requirements and help debug and correct a couple of SQL queries.
