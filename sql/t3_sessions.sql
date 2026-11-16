@@ -12,3 +12,41 @@
 -- Prediction (commit before running): median ratings per session = ______.
 
 -- YOUR QUERY HERE
+
+WITH gaps AS (
+    SELECT
+        user_id,
+        timestamp,
+        LAG(timestamp) OVER (
+            PARTITION BY user_id
+            ORDER BY timestamp, movie_id
+        ) AS previous_ts
+    FROM ratings
+),
+flags AS (
+    SELECT *,
+        CASE
+            WHEN previous_ts IS NULL
+              OR timestamp - previous_ts > 1800
+            THEN 1
+            ELSE 0
+        END AS new_session
+    FROM gaps
+),
+numbered AS (
+    SELECT *,
+        SUM(new_session) OVER (
+            PARTITION BY user_id
+            ORDER BY timestamp
+            ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+        ) AS session_no
+    FROM flags
+)
+SELECT
+    user_id,
+    session_no,
+    COUNT(*) AS n_ratings,
+    MIN(timestamp) AS start_ts,
+    MAX(timestamp) - MIN(timestamp) AS duration_s
+FROM numbered
+GROUP BY user_id, session_no;
