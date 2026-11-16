@@ -97,5 +97,5 @@ when performance is already excellent.
 
 The downside of adding indexes, however, is the increased storage requirements and slower writes, since indexes must be maintained whenever new data is written. In our case, the indexes added just under 2.5 MB to the database.
 
-However, I believe the additional costs are justified for a read-heavy database. Storage is generally cheaper than compute time, specially in cloud workloads and faster queries save developer time.
+However, I believe the additional costs are justified for a read-heavy database. Storage is generally cheaper than compute time, specifically in cloud workloads and faster queries save developer time.
 For write-heavy workloads, I would reconsider whether the performance gains justify the additional maintenance costs.
