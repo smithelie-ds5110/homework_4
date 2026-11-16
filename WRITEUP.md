@@ -38,3 +38,19 @@ Some occupations have less than 3 qualifying movies because not enough movies me
 Some occupations have fewer than three qualifying movies because not enough movies meet the minimum requirement of 20 ratings from users in that occupation. Executive has only two qualifying movies, and technician has only one. Eleven other occupations have no qualifying movies.
 Some occupations have fewer than three qualifying movies because not enough movies meet the minimum requirement of 20 ratings from users in that occupation. Executive has only two qualifying movies, and technician has only one. Eleven other occupations have no qualifying movies.
 
+# T3. Sessions and frames
+t3_sessions.sql
+- Prediction: Median ratings per session = 1. This is an educated guess because the total number of ratings does not tell us how frequently users rate movies or how their ratings are distributed over time. The actual median depends on the gaps between consecutive ratings.
+- Result: The query identified 2,793 sessions, with a median of 11 ratings per session and a maximum of 737 ratings in one session. My prediction of 1 was incorrect. Removing the explicit ROWS frame did not change the results.
+- Explanation:
+  - The query uses LAG() to find the previous rating's timestamp for each user. It then assigns a flag of 1 when a new session begins and 0 otherwise. A running SUM() of these flags assigns session numbers, and GROUP BY produces one row per session.
+  The default frame produces identical results because ratings with the same timestamp belong to the same session. Only the first rating at a timestamp can have a new session flag of 1; subsequent ratings at that timestamp have a flag of 0.
+  The ROWS frame processes flags individually while the default RANGE frame includes tied timestamps together. Since the additional flags are all 0, the session numbers remain unchanged.
+  The 30 minute rule could incorrectly split a real session if a user spends 40 minutes watching a movie before submitting another rating. Even though the user remained active, the rule would identify a new session.
+
+t3b_running_mean.sql
+- Prediction: I predict the two running averages will disagree on many rows because some ratings may have identical timestamps. One method processes tied ratings together, while the other processes them one at a time.
+- Result: The two running averages disagreed on 49,787 rows. There were 75,772 rows sharing a timestamp with another rating from the same user and all 49,787 disagreements occurred among those rows. The final running averages agreed for all 943 users.
+- Explanation: The differences occur when a user has multiple ratings with the same timestamp. The default RANGE frame includes all ratings tied at the current timestamp, while the explicit ROWS frame processes ratings individually.
+- Unlike the session flags, which only contain 0s after the first rating at a timestamp, individual rating scores can differ. Including several ratings at once can therefore change the running average compared with processing them one at a time.
+The calculations agree on each user's final value because both frames have included all of that user's ratings by the end. The final result is the overall average rating for that user, regardless of how the intermediate averages were calculated.
