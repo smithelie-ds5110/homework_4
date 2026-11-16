@@ -54,3 +54,16 @@ t3b_running_mean.sql
 - Explanation: The differences occur when a user has multiple ratings with the same timestamp. The default RANGE frame includes all ratings tied at the current timestamp, while the explicit ROWS frame processes ratings individually.
 - Unlike the session flags, which only contain 0s after the first rating at a timestamp, individual rating scores can differ. Including several ratings at once can therefore change the running average compared with processing them one at a time.
 The calculations agree on each user's final value because both frames have included all of that user's ratings by the end. The final result is the overall average rating for that user, regardless of how the intermediate averages were calculated.
+
+# T4. Two indexes for four queries
+I am choosing to add indexes for movie_id and timestamp.
+- Prediction: 
+  - Query A: BEFORE: SEARCH existing PK index + temp B-tree for sorting AFTER: Same
+  - Query B: BEFORE: SCAN AFTER: SEARCH using movie_id
+  - Query C: BEFORE: SCAN AFTER: SEARCH using timestamp
+  - Query D: BEFORE: SCAN AFTER: SCAN
+  - Query D(rewritten): BEFORE: SCAN if no index AFTER: SEARCH using timestamp
+
+
+- Result:
+- Explanation: 
