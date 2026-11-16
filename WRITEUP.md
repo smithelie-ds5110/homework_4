@@ -87,7 +87,15 @@ I am choosing to add indexes for movie_id and timestamp.
     - No, I'd stick with my choice. The rewrite just unlocked the ability to use the timestamp index while keeping my other performant gains viable.
     - Queries B and C improved by approximately 115× and 154×, respectively, while the rewritten D improved by approximately 13×. Query A showed no meaningful improvement, and the original D improved only slightly.
 
+# T5. Recommendation
+I would recommend adding indexes for movie_id and timestamp because they significantly improve query performance without altering the results.
+Based on measurements, the movie_id index made Query B about 115 times faster while the timestamp index made query C about 154 times faster.
+Also, rewriting Query D so it could use the timestamp index made it about 13 times faster.
 
+I would leave out an additional index for Query A because it already uses an existing index and runs in about 0.08 ms. There is little to gain by adding another index
+when performance is already excellent.
 
+The downside of adding indexes, however, is the increased storage requirements and slower writes, since indexes must be maintained whenever new data is written. In our case, the indexes added just under 2.5 MB to the database.
 
-- Explanation: 
+However, I believe the additional costs are justified for a read-heavy database. Storage is generally cheaper than compute time, specifically in cloud workloads and faster queries save developer time.
+For write-heavy workloads, I would reconsider whether the performance gains justify the additional maintenance costs.
