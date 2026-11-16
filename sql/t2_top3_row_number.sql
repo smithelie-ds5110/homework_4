@@ -7,3 +7,32 @@
 -- Prediction (commit before running): ______ rows.
 
 -- YOUR QUERY HERE
+
+WITH movie_stats AS (
+    SELECT
+        u.occupation,
+        r.movie_id,
+        AVG(r.rating) mean_rating,
+        COUNT(*) n
+    FROM ratings r
+    JOIN users u USING (user_id)
+    GROUP BY u.occupation, r.movie_id
+    HAVING COUNT(*) >= 20
+),
+ranked AS (
+    SELECT
+        *,
+        ROW_NUMBER() OVER (PARTITION BY occupation ORDER BY mean_rating DESC, movie_id) pos
+    FROM movie_stats
+)
+
+SELECT
+    ranked.occupation,
+    ranked.pos,
+    ranked.movie_id,
+    m.title,
+    ranked.n,
+    ranked.mean_rating
+FROM ranked
+JOIN movies AS m USING (movie_id)
+WHERE pos <= 3;
