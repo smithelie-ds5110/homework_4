@@ -38,3 +38,12 @@ Some occupations have less than 3 qualifying movies because not enough movies me
 Some occupations have fewer than three qualifying movies because not enough movies meet the minimum requirement of 20 ratings from users in that occupation. Executive has only two qualifying movies, and technician has only one. Eleven other occupations have no qualifying movies.
 Some occupations have fewer than three qualifying movies because not enough movies meet the minimum requirement of 20 ratings from users in that occupation. Executive has only two qualifying movies, and technician has only one. Eleven other occupations have no qualifying movies.
 
+# T3. Sessions and frames
+t3_sessions.sql
+- Prediction: Median ratings per session = 1. This is an educated guess because the total number of ratings does not tell us how frequently users rate movies or how their ratings are distributed over time. The actual median depends on the gaps between consecutive ratings.
+- Result:
+- Explanation:
+t3b_running_mean.sql
+- Prediction: I predict the two running averages will disagree on many rows because some ratings may have identical timestamps. One method processes tied ratings together, while the other processes them one at a time.
+- Result:
+- Explanation:
