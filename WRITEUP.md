@@ -31,5 +31,10 @@ This simplifies the query while preserving the same results as the original.
 
 # T2. Top three per occupation
 - Prediction: There are 21 occupations in the database, so I expect ROW_NUMBER() to return at most 63 rows (21 × 3). The actual number may be lower because some occupations may have fewer than three movies meeting the minimum requirement of 20 ratings per movie from users in that occupation. RANK() may return more rows than ROW_NUMBER() because tied movies share the same rank, potentially producing more than three rows per occupation.
-- Result:
-- Explanation: 
+- Result: ROW_NUMBER() returned 27 rows, while RANK() returned 28. 
+- Explanation: The difference comes from a tie in the educator occupation, where Dr. Strangelove and Rear Window both have an average rating of ~4.5714. ROW_NUMBER() assigns each movie a unique position; excluding one of the tied movies from the top three. RANK() assigns both movies pos 3, allowing both to appear in the results. It also skips the next pos after a tie.
+
+Some occupations have less than 3 qualifying movies because not enough movies meet the minimum requirement of 20 ratings from users in that occupation. Executive only has 2 qualifying movies and technician only has 1. Eleven other occupations have no qualifying movies.
+Some occupations have fewer than three qualifying movies because not enough movies meet the minimum requirement of 20 ratings from users in that occupation. Executive has only two qualifying movies, and technician has only one. Eleven other occupations have no qualifying movies.
+Some occupations have fewer than three qualifying movies because not enough movies meet the minimum requirement of 20 ratings from users in that occupation. Executive has only two qualifying movies, and technician has only one. Eleven other occupations have no qualifying movies.
+
